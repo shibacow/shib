@@ -38,5 +38,8 @@
       "type": "APLv2"
     } 
   ],
+  "scripts" : {
+    "start": "NODE_PATH=lib node app.js"
+  },
   "main": "app.js"
 }
