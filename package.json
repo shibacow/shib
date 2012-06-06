@@ -39,7 +39,7 @@
     } 
   ],
   "scripts" : {
-    "start": "NODE_PATH=lib node app.js"
+    "start": "NODE_ENV=production NODE_PATH=lib node app.js"
   },
   "main": "app.js"
 }
