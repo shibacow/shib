@@ -1,7 +1,8 @@
 var servers = exports.servers = {
   hiveserver: {
     host: 'localhost',
-    port: 10000
+    port: 10000,
+    setup_queries: []
   },
   kyototycoon: {
     host: 'localhost',
