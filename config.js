@@ -6,5 +6,9 @@ var servers = exports.servers = {
   kyototycoon: {
     host: 'localhost',
     port: 1978
+  },
+  huahinmanager: {
+    host: 'localhost',
+    port: 9010
   }
 };
