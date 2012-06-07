@@ -185,7 +185,8 @@ app.get('/summary_bulk', function(req, res){
       // keyword_ids: (results[0].keyword_ids || results[1].keyword_ids)
     };
     var exist_ids = {};
-    response_obj.query_ids = results[0].ids.concat(results[1].ids).filter(function(v){
+    // response_obj.query_ids = results[0].ids.concat(results[1].ids).filter(function(v){
+    response_obj.query_ids = results[0].ids.filter(function(v){
       if (exist_ids[v]) return false;
       exist_ids[v] = true;
       return true;
