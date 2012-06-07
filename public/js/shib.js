@@ -41,6 +41,7 @@ $(function(){
   $('#download_tsv_button').click(function(){download_result_query({format:'tsv'});});
   $('#download_csv_button').click(function(){download_result_query({format:'csv'});});
 
+  /*
   // Grapharea
   $("#graph_render_execute_1").click(function(event){
     render_google_chart_api("chart_div", "Daily transferred bytes", shib_test_data1_columns, shib_test_data1, {width: 650, height: 450});
@@ -50,6 +51,7 @@ $(function(){
     render_google_chart_api("chart_div", "blog PV data", shib_test_data2_columns, shib_test_data2, {width: 650, height: 450});
     return false;
   });
+  */
 });
 
 /* basic data operations */
@@ -151,6 +153,7 @@ function query_current_state(query) {
   return state;
 };
 
+/*
 function detect_keyword_placeholders(querystring, opts) {
   var q = querystring;
   if (q.match(/__KEY__/) && q.match(/__KEY\d__/))
@@ -181,6 +184,7 @@ function detect_keyword_placeholders(querystring, opts) {
     return 1;
   return 0;
 };
+ */
 
 function timelabel_elapsed(completed_at, executed_at){
   if (!completed_at || !executed_at)
@@ -373,7 +377,7 @@ function update_tabs(reloading) {
     if (window.localStorage)
       $('#tab-yours').accordion('destroy');
     $('#tab-history').accordion('destroy');
-    $('#tab-keywords').accordion('destroy');
+    // $('#tab-keywords').accordion('destroy');
   }
 
   if (window.localStorage) {
@@ -388,8 +392,8 @@ function update_tabs(reloading) {
   update_history_tab(reloading);
   $("#tab-history").accordion({header:"h3", autoHeight:false});
 
-  update_keywords_tab(reloading);
-  $("#tab-keywords").accordion({header:"h3", autoHeight:false});
+  // update_keywords_tab(reloading);
+  // $("#tab-keywords").accordion({header:"h3", autoHeight:false});
   $("#listSelector").tabs();
 
   $('.queryitem').click(select_queryitem);
@@ -403,9 +407,9 @@ function load_tabs(opts) {
   };
   $.getJSON('/summary_bulk', function(data){
     shibdata.history = data.history;
-    shibdata.keywords = data.keywords;
+    // shibdata.keywords = data.keywords;
     shibdata.history_ids = data.history_ids;
-    shibdata.keyword_ids = data.keyword_ids;
+    // shibdata.keyword_ids = data.keyword_ids;
     shibdata.query_cache = {};
     shibdata.query_state_cache = {};
     shibdata.result_cache = {};
@@ -448,7 +452,7 @@ function create_queryitem_object(queryid, id_prefix){
     return '';
   var lastresult = query_last_result(query);
   var executed_at = (lastresult && lastresult.executed_at) || '-';
-  var keyword_primary = (query.keywords && query.keywords.length > 0 && query.keywords[0]) || '-';
+  // var keyword_primary = (query.keywords && query.keywords.length > 0 && query.keywords[0]) || '-';
   return {
     QueryKey: query.queryid,
     QueryId: (id_prefix || '') + query.queryid,
@@ -487,6 +491,7 @@ function update_history_tab(){
   });
 };
 
+/*
 function update_keywords_tab(){
   var keyword_num = 1;
   $('#tab-keywords').empty();
@@ -500,6 +505,7 @@ function update_keywords_tab(){
     keyword_num += 1;
   });
 };
+ */
 
 function deselect_and_new_query(quiet){
   release_selected_query();
@@ -548,25 +554,25 @@ function select_queryitem(event){
 function initiate_mainview(event, quiet) { /* event not used */
   deselect_and_new_query(quiet);
   update_queryeditor(true, '');
-  update_keywordbox(true, 0);
+  // update_keywordbox(true, 0);
   update_editbox(null, 'not executed');
   update_history_by_query(null);
 };
 
 function copy_selected_query(event) { /* event not used */
   var querystring = shibselectedquery.querystring;
-  var keywordlist = shibselectedquery.keywords;
+  //  var keywordlist = shibselectedquery.keywords;
   deselect_and_new_query();
   update_queryeditor(true, querystring);
   update_editbox(null, 'not executed');
-  update_keywordbox(true, detect_keyword_placeholders(querystring), keywordlist);
+  // update_keywordbox(true, detect_keyword_placeholders(querystring), keywordlist);
   update_history_by_query(null);
 };
 
 function update_mainview(query){
   shibselectedquery = query;
   update_queryeditor(false, query.querystring);
-  update_keywordbox(false, query.keywords.length, query.keywords);
+  // update_keywordbox(false, query.keywords.length, query.keywords);
   update_editbox(query);
 };
 
@@ -578,7 +584,7 @@ function queryeditor_watcher(){
     if (pre_querystring_value == $('#queryeditor').val())
       return;
     pre_querystring_value = $('#queryeditor').val();
-    update_keywordbox(true, detect_keyword_placeholders($('#queryeditor').val()), []);
+    // update_keywordbox(true, detect_keyword_placeholders($('#queryeditor').val()), []);
   };
 };
 
@@ -591,6 +597,7 @@ function update_queryeditor(editable, querystring) {
     editor.attr('readonly', true).addClass('readonly');
 };
 
+/*
 function update_keywordbox(editable, keywords, keywordlist) {
   if (keywords < 1) {
     $('#keywordbox div input').val('').attr('readonly', true).addClass('readonly');
@@ -622,6 +629,7 @@ function update_keywordbox(editable, keywords, keywordlist) {
     }
   }
 };
+ */
 
 function update_editbox(query, optional_state) {
   if (query)
@@ -815,6 +823,7 @@ function execute_query() {
     return;
   }
   var querystring = $('#queryeditor').val();
+  /*
   var keywordPlaceHolders = detect_keyword_placeholders(querystring, {quiet:true});
   var keywords = [];
   for(var i = 0; i < keywordPlaceHolders; i++) {
@@ -826,12 +835,14 @@ function execute_query() {
     show_error('Invalid Keywords', 'Blank keyword is not allowed');
     return;
   }
+   */
 
   $.ajax({
     url: '/execute',
     type: 'POST',
     dataType: 'json',
-    data: {querystring: querystring, keywords: keywords},
+    // data: {querystring: querystring, keywords: keywords},
+    data: {querystring: querystring},
     error: function(jqXHR, textStatus, err){
       console.log(jqXHR);
       console.log(textStatus);
@@ -930,12 +941,13 @@ function delete_query(event) {
   if (! shibselectedquery)
     return;
   var target = shibselectedquery;
-  var targetkeyword = (target.keywords && target.keywords.length > 0) ? target.keywords[0] : null;
+  // var targetkeyword = (target.keywords && target.keywords.length > 0) ? target.keywords[0] : null;
   $.ajax({
     url: '/delete',
     type: 'POST',
     dataType: 'json',
-    data: {queryid: target.queryid, keyword: targetkeyword},
+    // data: {queryid: target.queryid, keyword: targetkeyword},
+    data: {queryid: target.queryid},
     error: function(jqXHR, textStatus, err){
       console.log(jqXHR);
       console.log(textStatus);

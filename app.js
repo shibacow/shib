@@ -154,6 +154,7 @@ app.get('/summary_bulk', function(req, res){
       });
     });
   };
+  /*
   var correct_keywords = function(callback){
     shib.client().getKeywords(function(err, list){
       if (err) {callback(err); return;}
@@ -169,17 +170,19 @@ app.get('/summary_bulk', function(req, res){
       });
     });
   };
+   */
 
-  async.parallel([correct_history, correct_keywords], function(err, results){
+  //async.parallel([correct_history, correct_keywords], function(err, results){
+  async.parallel([correct_history], function(err, results){
     if (err) {
       error_handle(req, res, err);
       return;
     }
     var response_obj = {
       history: (results[0].history || results[1].history),
-      history_ids: (results[0].history_ids || results[1].history_ids),
-      keywords: (results[0].keywords || results[1].keywords),
-      keyword_ids: (results[0].keyword_ids || results[1].keyword_ids)
+      history_ids: (results[0].history_ids || results[1].history_ids) //,
+      // keywords: (results[0].keywords || results[1].keywords),
+      // keyword_ids: (results[0].keyword_ids || results[1].keyword_ids)
     };
     var exist_ids = {};
     response_obj.query_ids = results[0].ids.concat(results[1].ids).filter(function(v){
@@ -192,8 +195,9 @@ app.get('/summary_bulk', function(req, res){
 });
   
 app.post('/execute', function(req, res){
-  var keywords = req.body.keywords;
-  shib.client().createQuery(req.body.querystring, keywords, function(err, query){
+  // var keywords = req.body.keywords;
+  // shib.client().createQuery(req.body.querystring, keywords, function(err, query){
+  shib.client().createQuery(req.body.querystring, function(err, query){
     if (err) {
       if (err instanceof InvalidQueryError) {
         res.send(err, 400);
@@ -225,7 +229,7 @@ app.post('/giveup', function(req, res){
 
 app.post('/delete', function(req, res){
   var targetid = req.body.queryid;
-  var targetKeyword = req.body.keyword;
+  // var targetKeyword = req.body.keyword;
   var targetHistorySize = 5;
 
   shib.client().getHistories(function(err, histories){
@@ -234,7 +238,7 @@ app.post('/delete', function(req, res){
     var client = this;
     var targetHistories = histories.sort().reverse().slice(0, targetHistorySize); // unti-dictionary order, last 'targetHistorySize' items
     var funclist = [
-      function(callback){client.removeKeyword(targetKeyword, targetid); callback(null, 1);},
+      // function(callback){client.removeKeyword(targetKeyword, targetid); callback(null, 1);},
       function(callback){client.deleteQuery(targetid); callback(null, 1);}
     ].concat(targetHistories.map(function(h){return function(callback){client.removeHistory(h, targetid); callback(null, 1);};}));
     async.parallel(funclist, function(err, results){
@@ -258,31 +262,33 @@ app.post('/refresh', function(req, res){
   });
 });
 
+/*
 app.get('/keywords', function(req, res){
   shib.client().getKeywords(function(err, keywords){
     if (err) { error_handle(req, res, err); return; }
-    res.send(keywords); /* **** */
+    res.send(keywords);
   });
 });
 
 app.get('/keyword/:label', function(req, res){
   shib.client().getKeyword(req.params.label, function(err, idlist){
     if (err) { error_handle(req, res, err); return; }
-    res.send(idlist); /* **** */
+    res.send(idlist);
   });
 });
+*/
 
 app.get('/histories', function(req, res){
   shib.client().getHistories(function(err, histories){
     if (err) { error_handle(req, res, err); return; }
-    res.send(histories); /* *** */
+    res.send(histories);
   });
 });
 
 app.get('/history/:label', function(req, res){
   shib.client().getHistory(req.params.label, function(err, idlist){
     if (err) { error_handle(req, res, err); return; }
-    res.send(idlist); /* **** */
+    res.send(idlist);
   });
 });
 
