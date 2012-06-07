@@ -430,11 +430,15 @@ function load_tabs(opts) {
 
 $.template("queryItemTemplate",
            '<div><div class="queryitem" id="query-${QueryId}">' +
-           '  <div class="queryitem_information">${Information}</div>' +
+           '  <div class="queryitem_information"><table><tr>' +
+           '    <td width="80%">${Information}</td>' +
+           '    <td width="20%" style="text-align: right;"><a href="/q/${QueryKey}">URL</a></td>' +
+           '  </tr></table></div>' +
            '  <div class="queryitem_statement">${Statement}</div>' +
            '  <div class="queryitem_status">' +
            '    <span class="status_${Status}">${Status}</span>' +
            '    <span class="queryitem_etc">${Etc}</span>' +
+           '    ' +
            '  </div>' +
            '</div></div>');
 
@@ -446,8 +450,9 @@ function create_queryitem_object(queryid, id_prefix){
   var executed_at = (lastresult && lastresult.executed_at) || '-';
   var keyword_primary = (query.keywords && query.keywords.length > 0 && query.keywords[0]) || '-';
   return {
+    QueryKey: query.queryid,
     QueryId: (id_prefix || '') + query.queryid,
-    Information: executed_at + ', ' + keyword_primary,
+    Information: executed_at,
     Statement: query.querystring,
     Status: query_current_state(query),
     Etc: lastresult ?
