@@ -533,7 +533,7 @@ function update_editbox(query, optional_state) {
     change_editbox_querystatus_style('not executed');
     break;
   case 'running':
-    show_editbox_buttons(['giveup_button']);
+    show_editbox_buttons(['giveup_button', 'status_button']);
     change_editbox_querystatus_style('running');
     break;
   case 'executed':
@@ -551,25 +551,14 @@ function update_editbox(query, optional_state) {
     show_editbox_buttons(['delete_button']);
     change_editbox_querystatus_style('error', query_last_result(query));
     break;
-  case 're-running':
-    show_editbox_buttons(['giveup_button', 'display_full_button', 'display_head_button',
-                          'download_tsv_button', 'download_csv_button']);
-    change_editbox_querystatus_style('re-running', query_last_done_result(query));
-    break;
   default:
     show_error('UI Bug', 'unknown query status:' + state, 5, query);
   }
 }
 
 function show_editbox_buttons(buttons){
-  /*
   var allbuttons = [
-    'execute_button', 'giveup_button', 'rerun_button', 'delete_button',
-    'display_full_button', 'display_head_button', 'download_tsv_button', 'download_csv_button'
-  ];
-   */
-  var allbuttons = [
-    'execute_button', 'giveup_button', 'delete_button',
+    'execute_button', 'giveup_button', 'status_button', 'delete_button',
     'display_full_button', 'display_head_button', 'download_tsv_button', 'download_csv_button'
   ];
   if (! buttons)
