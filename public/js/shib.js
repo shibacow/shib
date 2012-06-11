@@ -533,7 +533,12 @@ function update_editbox(query, optional_state) {
     change_editbox_querystatus_style('not executed');
     break;
   case 'running':
-    show_editbox_buttons(['giveup_button', 'status_button']);
+    if (shibdetailcontrol) {
+      show_editbox_buttons(['giveup_button', 'status_button']);
+    }
+    else {
+      show_editbox_buttons(['giveup_button']);
+    }
     change_editbox_querystatus_style('running');
     break;
   case 'executed':
