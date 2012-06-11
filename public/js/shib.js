@@ -1,9 +1,9 @@
-google.load("visualization", "1", {packages:["corechart"]});
-
 var shibnotifications = [];
 var shibdata = {};
 var shibselectedquery = null;
 var shibselectedquery_dom = null;
+
+var shibdetailcontrol = false;
 
 var shib_QUERY_STATUS_CHECK_INTERVAL = 5000;
 var shib_QUERY_EDITOR_WATCHER_INTERVAL = 500;
@@ -12,6 +12,10 @@ var shib_NOTIFICATION_DEFAULT_DURATION_SECONDS = 10;
 var shib_RUNNING_QUERY_UPDATE_INTERVAL = 15000;
 
 $(function(){
+  if ($('input#detailcontrol').val() === 'true') {
+    shibdetailcontrol = true;
+  }
+
   load_tabs({callback:function(){
     follow_current_uri();
     setInterval(check_selected_running_query_state, shib_QUERY_STATUS_CHECK_INTERVAL);
@@ -33,7 +37,7 @@ $(function(){
 
   $('#execute_button').click(execute_query);
   $('#giveup_button').click(giveup_query);
-  $('#rerun_button').click(rerun_query);
+  $('#status_button').click(show_status_query);
   $('#delete_button').click(delete_query);
   $('#display_full_button').click(function(){show_result_query({range:'full'});});
   $('#display_head_button').click(function(){show_result_query({range:'head'});});
@@ -534,12 +538,17 @@ function update_editbox(query, optional_state) {
     break;
   case 'executed':
   case 'done':
+    /*
     show_editbox_buttons(['rerun_button', 'delete_button', 'display_full_button', 'display_head_button',
+                          'download_tsv_button', 'download_csv_button']);
+     */
+    show_editbox_buttons(['delete_button', 'display_full_button', 'display_head_button',
                           'download_tsv_button', 'download_csv_button']);
     change_editbox_querystatus_style('executed', query_last_result(query));
     break;
   case 'error':
-    show_editbox_buttons(['rerun_button', 'delete_button']);
+    // show_editbox_buttons(['rerun_button', 'delete_button']);
+    show_editbox_buttons(['delete_button']);
     change_editbox_querystatus_style('error', query_last_result(query));
     break;
   case 're-running':
@@ -553,8 +562,14 @@ function update_editbox(query, optional_state) {
 }
 
 function show_editbox_buttons(buttons){
+  /*
   var allbuttons = [
     'execute_button', 'giveup_button', 'rerun_button', 'delete_button',
+    'display_full_button', 'display_head_button', 'download_tsv_button', 'download_csv_button'
+  ];
+   */
+  var allbuttons = [
+    'execute_button', 'giveup_button', 'delete_button',
     'display_full_button', 'display_head_button', 'download_tsv_button', 'download_csv_button'
   ];
   if (! buttons)
@@ -771,6 +786,7 @@ function giveup_query() {
   });
 };
 
+/*
 function rerun_query() {
   if (! shibselectedquery) {
     show_error('UI Bug', 'rerun_query should not be enable with non-saved-query objects');
@@ -805,6 +821,61 @@ function rerun_query() {
     }
   });
 };
+ */
+
+
+$.template("detailStatusTemplate",
+           '<table>' +
+           '<tr><td>Job ID</td><td>${JobID}</td></tr>' +
+           '<tr><td>State</td><td>${State}</td></tr>' +
+           '<tr><td>Priority</td><td>${Priority}</td></tr>' +
+           '<tr><td>URL</td><td><a href="${Url}">${Url}</a></td></tr>' +
+           '<tr><td>Complete</td><td>Map:${MapComplete}, Reduce:${ReduceComplete}</td></tr>' +
+           '</table>');
+function show_status_query(event) {
+  if (! shibdetailcontrol)
+    return;
+  if (! shibselectedquery)
+    return;
+  var target = shibselectedquery;
+  $.ajax({
+    url: '/detailstatus/' + target.queryid,
+    type: 'GET',
+    error: function(jqXHR, textStatus, err) {
+      console.log(jqXHR);
+      console.log(textStatus);
+      var msg = null;
+      try {
+        msg = JSON.parse(jqXHR.responseText).message;
+      }
+      catch (e) {
+        msg = jqXHR.responseText;
+      }
+      show_error('Failed to get detail status', msg);
+    },
+    success: function(data) {
+      var state;
+      try {
+        state = JSON.parse(data);
+      }
+      catch (e) {
+        state = {state:'parse error'};
+      }
+      /*
+       jobid, name, priority, state, jobSetup, status, jobCleanup,
+       trackingURL, startTime, mapComplete, reduceComplete,
+       hiveQueryId, hiveQueryString
+       */
+      $.tmpl("detailStatusTemplate",[
+        {
+          JobID: state['jobid'], State: state['state'], Priority: state['priority'],
+          URL: state['trackingURL'], MapComplete: state['mapComplete'], ReduceComplete: state['ReduceComplete']
+        }
+      ]).appendTo('#detailstatus');
+      $('#detailstatusdiag').dialog({modal:true, resizable:false, height:400, width:600, maxHeight:650, maxWidth:950});
+    }
+  });
+}
 
 function delete_query(event) {
   if (! shibselectedquery)

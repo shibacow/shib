@@ -15,6 +15,8 @@ html
     script(type="text/javascript", src="https://www.google.com/jsapi")
     script(type="text/javascript", src="/js/shib.js")
   body
+    div(style="display: none;")
+      input#detailcontrol(type="hidden", name="detailcontrol", value="#{control}")
     #titlearea
       #title
         a(href="/") shib
@@ -42,6 +44,10 @@ html
       .loadingimg(style="display:none; padding-top: 2em; text-align: center; vertical-align: center;")
         image(src="/image/ajax-loader.gif")
       #describes
+    #detailstatusdialog(title="query status")
+      .loadingimg(style="display:none; padding-top: 2em; text-align: center; vertical-align: center;")
+        image(src="/image/ajax-loader.gif")
+      #detailstatus
     #mainarea
       table
         tr
@@ -72,9 +78,13 @@ html
                   li#giveup_button.ui-state-default.ui-corner-all(style="display: none;")
                     span.ui-icon.ui-icon-pause
                     | give up
-                  li#rerun_button.ui-state-default.ui-corner-all(style="display: none;")
-                    span.ui-icon.ui-icon-play
-                    | re-run
+                  //
+                    li#rerun_button.ui-state-default.ui-corner-all(style="display: none;")
+                      span.ui-icon.ui-icon-play
+                      | re-run
+                  li#status_button.ui-state-default.ui-corner-all
+                    span.ui-icon.ui-icon-search
+                    | status
                   li#delete_button.ui-state-default.ui-corner-all(style="display: none;")
                     span.ui-icon.ui-icon-trash
                     | delete
@@ -109,11 +119,8 @@ html
                     a(href="#tab-yours") yours
                   li#index-history
                     a(href="#tab-history") history
-                  li#index-keywords
-                    a(href="#tab-keywords") keywords
                 #tab-yours
                 #tab-history
-                #tab-keywords
   #runningarea
     #runnings.ui-corner-all
       div no running queries

@@ -9,6 +9,7 @@ var servers = exports.servers = {
     port: 1978
   },
   huahinmanager: {
+    enable: true,
     host: 'localhost',
     port: 9010
   }

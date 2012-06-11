@@ -3,6 +3,7 @@ var express = require('express'),
     async = require('async'),
     app = express.createServer();
 
+var SHOW_HISTORY_MONTH = 4;
 var MAX_ACCORDION_SIZE = 20;
 var SHOW_RESULT_HEAD_LINES = 20;
 
@@ -30,6 +31,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.bodyParser());
   app.use(app.router);
+  app.set('view options', {layout: false});
 });
 
 app.configure('development', function(){
@@ -44,13 +46,14 @@ app.configure('production', function(){
 });
 
 app.get('/', function(req, res){
-  // res.redirect('/index.html');
-  res.render(__dirname + '/views/index.jade', {layout: false});
+  var huahin = (shib.client().huahinClient() !== null);
+  res.render(__dirname + '/views/index.jade', {control: huahin});
 });
 
 app.get('/q/:queryid', function(req, res){
   // Only this request handler is for permalink request from browser URL bar.
-  res.render(__dirname + '/views/index.jade', {layout: false});
+  var huahin = (shib.client().huahinClient() !== null);
+  res.render(__dirname + '/views/index.jade', {control: huahin});
 });
 
 app.get('/runnings', function(req, res){
@@ -140,15 +143,16 @@ app.get('/summary_bulk', function(req, res){
   var correct_history = function(callback){
     shib.client().getHistories(function(err, list){
       if (err) {callback(err); return;}
-      this.getHistoryBulk(list, function(err, idlist){
+      var target = list.sort().slice(-1 * SHOW_HISTORY_MONTH);
+      this.getHistoryBulk(target, function(err, idlist){
         if (err) {callback(err); return;}
         var idmap = {};
         var ids = [];
-        for (var x = 0; x < list.length; x++) {
-          idmap[list[x]] = idlist[x].reverse().slice(0,MAX_ACCORDION_SIZE);
-          ids = ids.concat(idmap[list[x]]);
+        for (var x = 0, y = target.length; x < y; x++) {
+          idmap[target[x]] = idlist[x].reverse().slice(0,MAX_ACCORDION_SIZE);
+          ids = ids.concat(idmap[target[x]]);
         }
-        callback(null, {history:list.reverse(), history_ids:idmap, ids:ids});
+        callback(null, {history:target.reverse(), history_ids:idmap, ids:ids});
       });
     });
   };
@@ -159,8 +163,8 @@ app.get('/summary_bulk', function(req, res){
       return;
     }
     var response_obj = {
-      history: (results[0].history || results[1].history),
-      history_ids: (results[0].history_ids || results[1].history_ids) //,
+      history: results[0].history,
+      history_ids: results[0].history_ids
     };
     var exist_ids = {};
     response_obj.query_ids = results[0].ids.filter(function(v){
@@ -223,6 +227,7 @@ app.post('/delete', function(req, res){
   });
 });
 
+/*
 app.post('/refresh', function(req, res){
   shib.client().query(req.body.queryid, function(err, query){
     if (err) { error_handle(req, res, err); return; }
@@ -235,6 +240,7 @@ app.post('/refresh', function(req, res){
     });
   });
 });
+ */
 
 app.get('/histories', function(req, res){
   shib.client().getHistories(function(err, histories){
@@ -270,6 +276,13 @@ app.get('/status/:queryid', function(req, res){
     this.status(query, function(state){
       res.send(state);
     });
+  });
+});
+
+app.get('/detailstatus/:queryid', function(req, res){
+  shib.client().detailStatus(req.params.queryid, function(err, data){
+    if (err) { error_handle(req, res, err); return; }
+    res.send(data);
   });
 });
 
