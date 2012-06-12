@@ -221,19 +221,6 @@ app.post('/giveup', function(req, res){
         res.send(query);
       });
     }
-
-    client.giveup(query, function(){
-      delete runningQueries[query.queryid];
-
-      if (client.huahinClient()) {
-        client.killQuery(query.queryid, function(err,result){
-          res.send(query);
-        });
-      }
-      else {
-        res.send(query);
-      }
-    });
   });
 });
 
