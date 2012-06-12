@@ -13,11 +13,9 @@ var SimpleCSVBuilder = require('shib/simple_csv_builder').SimpleCSVBuilder;
 var shib = require('shib'),
     servers = require('./config').servers;
 
-console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production') {
   servers = require('./production').servers;
 }
-console.log(servers);
 shib.init(servers);
 
 var runningQueries = {};
@@ -204,7 +202,15 @@ app.post('/giveup', function(req, res){
     var client = this;
     client.giveup(query, function(){
       delete runningQueries[query.queryid];
-      res.send(query);
+
+      if (client.huahinClient()) {
+        client.huahinClient().killQuery(query.queryid, function(err,result){
+          res.send(query);
+        });
+      }
+      else {
+        res.send(query);
+      }
     });
   });
 });
