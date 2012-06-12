@@ -839,23 +839,11 @@ function show_status_query(event) {
       console.log(jqXHR);
       console.log(textStatus);
       var msg = null;
-      try {
-        msg = JSON.parse(jqXHR.responseText).message;
-      }
-      catch (e) {
-        msg = jqXHR.responseText;
-      }
+      try { msg = JSON.parse(jqXHR.responseText).message; }
+      catch (e) { msg = jqXHR.responseText; }
       show_error('Failed to get detail status', msg);
     },
-    success: function(data) {
-      console.log({data:data});
-      var state;
-      try {
-        state = JSON.parse(data);
-      }
-      catch (e) {
-        state = {state:'parse error'};
-      }
+    success: function(state) {
       /*
        jobid, name, priority, state, jobSetup, status, jobCleanup,
        trackingURL, startTime, mapComplete, reduceComplete,
