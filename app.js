@@ -284,7 +284,10 @@ app.get('/status/:queryid', function(req, res){
 app.get('/detailstatus/:queryid', function(req, res){
   shib.client().detailStatus(req.params.queryid, function(err, data){
     if (err) { error_handle(req, res, err); return; }
-    res.send(data);
+    if (data === null)
+      res.send({state:'query not found'});
+    else
+      res.send(data);
   });
 });
 
