@@ -360,7 +360,7 @@ function show_status_dialog(target) {
       $.tmpl("detailStatusTemplate",[
         {
           JobID: state['jobid'], State: state['state'], Priority: state['priority'],
-          URL: state['trackingURL'], MapComplete: state['mapComplete'], ReduceComplete: state['ReduceComplete']
+          Url: state['trackingURL'], MapComplete: state['mapComplete'], ReduceComplete: state['ReduceComplete']
         }
       ]).appendTo('#detailstatus');
       $('#detailstatusdiag .loadingimg').hide();
