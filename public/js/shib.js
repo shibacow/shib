@@ -780,44 +780,6 @@ function giveup_query() {
   });
 };
 
-/*
-function rerun_query() {
-  if (! shibselectedquery) {
-    show_error('UI Bug', 'rerun_query should not be enable with non-saved-query objects');
-    return;
-  }
-  $.ajax({
-    url: '/refresh',
-    type: 'POST',
-    dataType: 'json',
-    data: {queryid: shibselectedquery.queryid},
-    error: function(jqXHR, textStatus, err){
-      console.log(jqXHR);
-      console.log(textStatus);
-      var msg = null;
-      try {
-        msg = JSON.parse(jqXHR.responseText).message;
-      }
-      catch (e) {
-        msg = jqXHR.responseText;
-      }
-      show_error('Cannot ReRun Query', msg);
-    },
-    success: function(query){
-      show_info('Query now waiting to re-run', '');
-      shibdata.query_cache[query.queryid] = query;
-      shibdata.query_state_cache[query.queryid] = 're-running';
-      update_mainview(query);
-      if (window.localStorage) {
-        push_execute_query_list(query.queryid, true); // with refreshing
-      }
-      load_tabs({reload:true});
-    }
-  });
-};
- */
-
-
 $.template("detailStatusTemplate",
            '<table>' +
            '<tr><td>Job ID</td><td>${JobID}</td></tr>' +
@@ -850,13 +812,14 @@ function show_status_query(event) {
        hiveQueryId, hiveQueryString
        */
       console.log({state:state});
+      $('#detailstatusdiag').dialog({modal:true, resizable:false, height:400, width:600, maxHeight:650, maxWidth:950});
       $.tmpl("detailStatusTemplate",[
         {
           JobID: state['jobid'], State: state['state'], Priority: state['priority'],
           URL: state['trackingURL'], MapComplete: state['mapComplete'], ReduceComplete: state['ReduceComplete']
         }
       ]).appendTo('#detailstatus');
-      $('#detailstatusdiag').dialog({modal:true, resizable:false, height:400, width:600, maxHeight:650, maxWidth:950});
+      $('#detailstatus').show();
     }
   });
 }
@@ -912,3 +875,4 @@ function download_result_query(opts) { /* opts: {format:tsv/csv} */
   }
   window.location = '/download/' + format + '/' + query_last_done_result(shibselectedquery).resultid;
 };
+
