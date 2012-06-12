@@ -13,9 +13,11 @@ var SimpleCSVBuilder = require('shib/simple_csv_builder').SimpleCSVBuilder;
 var shib = require('shib'),
     servers = require('./config').servers;
 
+console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production') {
   servers = require('./production').servers;
 }
+console.log(servers);
 shib.init(servers);
 
 var runningQueries = {};
