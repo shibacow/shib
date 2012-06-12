@@ -328,6 +328,47 @@ function show_describe_dialog() {
   });
 };
 
+$.template("detailStatusTemplate",
+           '<table>' +
+           '<tr><td>Job ID</td><td>${JobID}</td></tr>' +
+           '<tr><td>State</td><td>${State}</td></tr>' +
+           '<tr><td>Priority</td><td>${Priority}</td></tr>' +
+           '<tr><td>URL</td><td><a href="${Url}">${Url}</a></td></tr>' +
+           '<tr><td>Complete</td><td>Map:${MapComplete}, Reduce:${ReduceComplete}</td></tr>' +
+           '</table>');
+function show_status_dialog(target) {
+  $('#detailstatus').empty().hide();
+  $('#detailstatusdiag').dialog({modal:true, resizable:false, height:400, width:600, maxHeight:650, maxWidth:950});
+  $('#detailstatusdiag .loadingimg').show();
+  $.ajax({
+    url: '/detailstatus/' + target.queryid + '?t=' + (new Date()).getTime(),
+    type: 'GET',
+    error: function(jqXHR, textStatus, err) {
+      console.log(jqXHR);
+      console.log(textStatus);
+      var msg = null;
+      try { msg = JSON.parse(jqXHR.responseText).message; }
+      catch (e) { msg = jqXHR.responseText; }
+      show_error('Failed to get detail status', msg);
+    },
+    success: function(state) {
+      /*
+       jobid, name, priority, state, jobSetup, status, jobCleanup,
+       trackingURL, startTime, mapComplete, reduceComplete,
+       hiveQueryId, hiveQueryString
+       */
+      $.tmpl("detailStatusTemplate",[
+        {
+          JobID: state['jobid'], State: state['state'], Priority: state['priority'],
+          URL: state['trackingURL'], MapComplete: state['mapComplete'], ReduceComplete: state['ReduceComplete']
+        }
+      ]).appendTo('#detailstatus');
+      $('#detailstatusdiag .loadingimg').hide();
+      $('#detailstatus').show();
+    }
+  });
+}
+
 /* right pane operations */
 
 function update_tabs(reloading) {
@@ -780,48 +821,12 @@ function giveup_query() {
   });
 };
 
-$.template("detailStatusTemplate",
-           '<table>' +
-           '<tr><td>Job ID</td><td>${JobID}</td></tr>' +
-           '<tr><td>State</td><td>${State}</td></tr>' +
-           '<tr><td>Priority</td><td>${Priority}</td></tr>' +
-           '<tr><td>URL</td><td><a href="${Url}">${Url}</a></td></tr>' +
-           '<tr><td>Complete</td><td>Map:${MapComplete}, Reduce:${ReduceComplete}</td></tr>' +
-           '</table>');
 function show_status_query(event) {
   if (! shibdetailcontrol)
     return;
   if (! shibselectedquery)
     return;
-  var target = shibselectedquery;
-  $.ajax({
-    url: '/detailstatus/' + target.queryid + '?t=' + (new Date()).getTime(),
-    type: 'GET',
-    error: function(jqXHR, textStatus, err) {
-      console.log(jqXHR);
-      console.log(textStatus);
-      var msg = null;
-      try { msg = JSON.parse(jqXHR.responseText).message; }
-      catch (e) { msg = jqXHR.responseText; }
-      show_error('Failed to get detail status', msg);
-    },
-    success: function(state) {
-      /*
-       jobid, name, priority, state, jobSetup, status, jobCleanup,
-       trackingURL, startTime, mapComplete, reduceComplete,
-       hiveQueryId, hiveQueryString
-       */
-      console.log({state:state});
-      $('#detailstatusdiag').dialog({modal:true, resizable:false, height:400, width:600, maxHeight:650, maxWidth:950});
-      $.tmpl("detailStatusTemplate",[
-        {
-          JobID: state['jobid'], State: state['state'], Priority: state['priority'],
-          URL: state['trackingURL'], MapComplete: state['mapComplete'], ReduceComplete: state['ReduceComplete']
-        }
-      ]).appendTo('#detailstatus');
-      $('#detailstatus').show();
-    }
-  });
+  show_status_dialog(shibselectedquery);
 }
 
 function delete_query(event) {
