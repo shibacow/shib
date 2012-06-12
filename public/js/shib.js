@@ -338,7 +338,7 @@ $.template("detailStatusTemplate",
            '</table>');
 function show_status_dialog(target) {
   $('#detailstatus').empty().hide();
-  $('#detailstatusdiag').dialog({modal:true, resizable:false, height:400, width:600, maxHeight:650, maxWidth:950});
+  $('#detailstatusdiag').dialog({modal:true, resizable:false, height:200, width:600, maxHeight:200, maxWidth:950});
   $('#detailstatusdiag .loadingimg').show();
   $.ajax({
     url: '/detailstatus/' + target.queryid + '?t=' + (new Date()).getTime(),
