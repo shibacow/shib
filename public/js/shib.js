@@ -833,7 +833,7 @@ function show_status_query(event) {
     return;
   var target = shibselectedquery;
   $.ajax({
-    url: '/detailstatus/' + target.queryid,
+    url: '/detailstatus/' + target.queryid + '?t=' + (new Date()).getTime(),
     type: 'GET',
     error: function(jqXHR, textStatus, err) {
       console.log(jqXHR);
@@ -848,6 +848,7 @@ function show_status_query(event) {
       show_error('Failed to get detail status', msg);
     },
     success: function(data) {
+      console.log({data:data});
       var state;
       try {
         state = JSON.parse(data);
@@ -860,6 +861,7 @@ function show_status_query(event) {
        trackingURL, startTime, mapComplete, reduceComplete,
        hiveQueryId, hiveQueryString
        */
+      console.log({state:state});
       $.tmpl("detailStatusTemplate",[
         {
           JobID: state['jobid'], State: state['state'], Priority: state['priority'],
