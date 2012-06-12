@@ -200,11 +200,33 @@ app.post('/giveup', function(req, res){
   var targetid = req.body.queryid;
   shib.client().query(targetid, function(err, query){
     var client = this;
+
+    if (client.huahinClient()) {
+      client.searchJob(query.queryid, function(err, jobid){
+        if (err || jobid === undefined) {
+          client.giveup(query, function(){
+            delete runningQueries[query.queryid];
+            res.send(query);
+          });
+          return;
+        }
+        client.killJob(jobid, function(err,result){
+          res.send(query);
+        });
+      });
+    }
+    else {
+      client.giveup(query, function(){
+        delete runningQueries[query.queryid];
+        res.send(query);
+      });
+    }
+
     client.giveup(query, function(){
       delete runningQueries[query.queryid];
 
       if (client.huahinClient()) {
-        client.huahinClient().killQuery(query.queryid, function(err,result){
+        client.killQuery(query.queryid, function(err,result){
           res.send(query);
         });
       }
@@ -234,21 +256,6 @@ app.post('/delete', function(req, res){
     });
   });
 });
-
-/*
-app.post('/refresh', function(req, res){
-  shib.client().query(req.body.queryid, function(err, query){
-    if (err) { error_handle(req, res, err); return; }
-    res.send(query);
-    this.execute(query, {
-      refreshed: (query.results.length > 0), // refreshed execution or not
-      prepare: function(query){runningQueries[query.queryid] = new Date();},
-      success: function(query){delete runningQueries[query.queryid];},
-      error: function(query){delete runningQueries[query.queryid];}
-    });
-  });
-});
- */
 
 app.get('/histories', function(req, res){
   shib.client().getHistories(function(err, histories){
