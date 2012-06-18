@@ -56,7 +56,7 @@ app.get('/', function(req, res){
     });
   }
   else {
-    res.render(__dirname + '/views/index.jade', {control: huahin});
+    res.render(__dirname + '/views/index.jade', {control: huahin, defaultdb:null});
   }
 });
 
