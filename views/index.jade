@@ -38,7 +38,7 @@ html
       pre#resultdisplay
     #tablesdiag(title="tables status", style="display:none;")
       if defaultdb
-        select#table_dbname
+        select#table_dbname(style="width: 300;")
           for name in databases
             if defaultdb === name
               option(selected=true)= name
@@ -49,7 +49,7 @@ html
       #tables(style="display: none;")
     #describediag(title="table schema", style="display:none;")
       if defaultdb
-        select#desc_dbname
+        select#desc_dbname(style="width: 300;")
           for name in databases
             if defaultdb === name
               option(selected=true)= name

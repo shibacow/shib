@@ -282,8 +282,8 @@ function show_tables_dialog() {
   $('#tablesdiag').dialog({modal:true, resizable:true, height:400, width:400, maxHeight:650, maxWidth:950});
   $('#tablesdiag .loadingimg').show();
   var dbname = null;
-  if ($('table_dbname').val()) {
-    dbname = $('table_dbname').val();
+  if ($('#table_dbname').val()) {
+    dbname = $('#table_dbname').val();
   }
   var get_path = (dbname ? '/tables?db=' + dbname : '/tables');
   $.get(get_path, function(data){
@@ -317,8 +317,8 @@ function show_describe_dialog() {
   $('#describediag').dialog({modal:true, resizable:true, height:400, width:400, maxHeight:650, maxWidth:950});
   $('#describediag .loadingimg').show();
   var dbname = null;
-  if ($('desc_dbname').val()) {
-    dbname = $('desc_dbname').val();
+  if ($('#desc_dbname').val()) {
+    dbname = $('#desc_dbname').val();
   }
   var get_path = (dbname ? '/tables?db=' + dbname : '/tables');
   $.get(get_path, function(data){
