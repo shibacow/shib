@@ -37,10 +37,24 @@ html
     #resultdiag(title="show result")
       pre#resultdisplay
     #tablesdiag(title="tables status")
+      if (defaultdb)
+        select#table_dbname
+        for (var name in databases)
+          if (defaultdb === name)
+            option(selected=true)= name
+          else
+            option= name
       .loadingimg(style="display:none; padding-top: 2em; text-align: center; vertical-align: center;")
         image(src="/image/ajax-loader.gif")
       #tables(style="display: none;")
     #describediag(title="table schema")
+      if (defaultdb)
+        select#desc_dbname
+        for (var name in databases)
+          if (defaultdb === name)
+            option(selected=true)= name
+          else
+            option= name
       .loadingimg(style="display:none; padding-top: 2em; text-align: center; vertical-align: center;")
         image(src="/image/ajax-loader.gif")
       #describes
@@ -78,10 +92,6 @@ html
                   li#giveup_button.ui-state-default.ui-corner-all(style="display: none;")
                     span.ui-icon.ui-icon-pause
                     | give up
-                  //
-                    li#rerun_button.ui-state-default.ui-corner-all(style="display: none;")
-                      span.ui-icon.ui-icon-play
-                      | re-run
                   li#status_button.ui-state-default.ui-corner-all(style="display: none;")
                     span.ui-icon.ui-icon-search
                     | status
