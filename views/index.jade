@@ -34,9 +34,9 @@ html
             span.ui-icon.ui-icon-info(style="float: left; margin-right: .3em;")
             strong#infotitle TITLE
             span#infomessage(style="margin-left: .7em;") Highlighted Message
-    #resultdiag(title="show result")
+    #resultdiag(title="show result", style="display:none;")
       pre#resultdisplay
-    #tablesdiag(title="tables status")
+    #tablesdiag(title="tables status", style="display:none;")
       if defaultdb
         select#table_dbname
         for name in databases
@@ -47,7 +47,7 @@ html
       .loadingimg(style="display:none; padding-top: 2em; text-align: center; vertical-align: center;")
         image(src="/image/ajax-loader.gif")
       #tables(style="display: none;")
-    #describediag(title="table schema")
+    #describediag(title="table schema", style="display:none;")
       if defaultdb
         select#desc_dbname
         for name in databases
@@ -58,7 +58,7 @@ html
       .loadingimg(style="display:none; padding-top: 2em; text-align: center; vertical-align: center;")
         image(src="/image/ajax-loader.gif")
       #describes
-    #detailstatusdiag(title="query status")
+    #detailstatusdiag(title="query status", style="display:none;")
       .loadingimg(style="display:none; padding-top: 2em; text-align: center; vertical-align: center;")
         image(src="/image/ajax-loader.gif")
       #detailstatus(style="display: none;")
