@@ -37,10 +37,10 @@ html
     #resultdiag(title="show result")
       pre#resultdisplay
     #tablesdiag(title="tables status")
-      if (defaultdb)
+      if defaultdb
         select#table_dbname
-        for (var name in databases)
-          if (defaultdb === name)
+        for name in databases
+          if defaultdb === name
             option(selected=true)= name
           else
             option= name
@@ -48,10 +48,10 @@ html
         image(src="/image/ajax-loader.gif")
       #tables(style="display: none;")
     #describediag(title="table schema")
-      if (defaultdb)
+      if defaultdb
         select#desc_dbname
-        for (var name in databases)
-          if (defaultdb === name)
+        for name in databases
+          if defaultdb === name
             option(selected=true)= name
           else
             option= name
