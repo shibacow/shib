@@ -1,9 +1,10 @@
+
 var express = require('express'),
     jade = require('jade'),
     async = require('async'),
     app = express();
 
-var RECENT_FETCHES = 50;
+var RECENT_FETCHES = 450;
 var SHOW_RESULT_HEAD_LINES = 20;
 
 var InvalidQueryError = require('shib/query').InvalidQueryError;
