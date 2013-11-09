@@ -3,6 +3,7 @@ var servers = exports.servers = {
   fetch_lines: 1000,
   query_timeout: null, // seconds. (null:shib will wait query response infinitely).
   setup_queries: [],
+  enviroment:"dev",
   storage: {
     datadir: './var'
   },
